@@ -35,13 +35,14 @@ export async function signUpAction(
   const { fullName, email, password } = parsed.data;
   const supabase = await createClient();
 
+  const next = String(formData.get("next") ?? "/onboarding");
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: { full_name: fullName },
-      emailRedirectTo: `${appUrl}/auth/callback?next=/onboarding`,
+      emailRedirectTo: `${appUrl}/auth/callback?next=${encodeURIComponent(next)}`,
     },
   });
 
@@ -80,5 +81,6 @@ export async function signInAction(
     };
   }
 
-  redirect("/dashboard");
+  const next = String(formData.get("next") ?? "/dashboard");
+  redirect(next);
 }

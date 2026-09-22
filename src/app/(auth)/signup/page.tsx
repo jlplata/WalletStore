@@ -2,7 +2,9 @@ import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SignupForm } from "./signup-form";
 
-export default function SignupPage() {
+export default async function SignupPage({ searchParams }: PageProps<"/signup">) {
+  const { next } = await searchParams;
+
   return (
     <Card>
       <CardHeader>
@@ -10,7 +12,7 @@ export default function SignupPage() {
         <CardDescription>Empieza gratis, sin tarjeta de crédito.</CardDescription>
       </CardHeader>
       <CardContent>
-        <SignupForm />
+        <SignupForm next={typeof next === "string" ? next : undefined} />
         <p className="mt-4 text-center text-sm text-muted-foreground">
           ¿Ya tienes cuenta?{" "}
           <Link href="/login" className="font-medium text-foreground underline underline-offset-4">

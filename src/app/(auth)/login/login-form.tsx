@@ -8,11 +8,12 @@ import { signInAction, type AuthFormState } from "../actions";
 
 const initialState: AuthFormState = {};
 
-export function LoginForm() {
+export function LoginForm({ next }: { next?: string }) {
   const [state, formAction, pending] = useActionState(signInAction, initialState);
 
   return (
     <form action={formAction} className="space-y-4">
+      {next && <input type="hidden" name="next" value={next} />}
       <div className="space-y-2">
         <Label htmlFor="email">Correo</Label>
         <Input

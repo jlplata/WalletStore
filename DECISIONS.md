@@ -52,6 +52,21 @@ Next.js 16 renombró la convención `middleware` a `proxy` (función exportada
 `proxy` en `proxy.ts`). Se usa la convención nueva; ver
 `node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/proxy.md`.
 
+## 2026-09-22 — URL pública de registro: `/join/[programId]` (UUID)
+Un negocio puede tener varios programas; `programs.slug` solo es único por
+organización, no globalmente. En vez de componer `/join/[orgSlug]/[programSlug]`,
+se usa directamente el UUID del programa (`/join/[programId]`), que es
+globalmente único y no requiere lógica de desambiguación. No es información
+sensible (se comparte a propósito vía QR).
+
+## 2026-09-22 — Onboarding: pasos como rutas, no wizard de un solo estado
+Cada paso del onboarding (`/onboarding`, `/onboarding/[orgId]/marca`, `.../sucursal`,
+`.../programa`, `.../wallet`, `.../qr`) es su propia ruta que persiste al servidor
+inmediatamente, en vez de un formulario multi-paso en el cliente que se envía
+al final. Motivo: sobrevive a refresh/cierre del navegador, cada paso queda
+protegido por `requireOrgRole` de forma independiente, y evita perder trabajo
+si el negocio abandona el flujo a la mitad.
+
 ## 2026-09-22 — Monorepo simple (no monorepo multi-paquete)
 Un solo proyecto Next.js full-stack en la raíz del repo, sin separar en
 paquetes/workspaces todavía. Motivo: simplicidad > complejidad prematura;

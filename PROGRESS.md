@@ -21,7 +21,17 @@ Leyenda: COMPLETED · IN PROGRESS · BLOCKED · NEXT
   pasan limpio.
 
 ## FASE 2 — Organizations
-- NEXT
+- COMPLETED: Onboarding guiado en 6 pasos (negocio → marca → sucursal →
+  programa → vista previa Wallet → QR), cada paso persistido en el servidor
+  vía Server Actions con validación Zod y `requireOrgRole`. Subida real de
+  logo a Supabase Storage (`org-assets`, bucket público de lectura, RLS por
+  organización). Generación de QR real (`qrcode`) con URL de registro
+  descargable. Página `/org/[orgSlug]/branches` (crear/editar/suspender).
+  Página `/org/[orgSlug]/team` (invitar con token expirable + email real vía
+  Resend o consola en dev, cambiar rol, remover acceso, revocar invitación).
+  Flujo `/invite/[token]` para aceptar invitaciones. `/org/[orgSlug]/settings`
+  para editar info general y marca después del onboarding. `EmailProvider`
+  (Resend / consola) implementado. lint, typecheck y build pasan limpio.
 
 ## FASE 3 — Loyalty Engine
 - NEXT

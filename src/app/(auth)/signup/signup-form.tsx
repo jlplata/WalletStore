@@ -8,11 +8,12 @@ import { signUpAction, type AuthFormState } from "../actions";
 
 const initialState: AuthFormState = {};
 
-export function SignupForm() {
+export function SignupForm({ next }: { next?: string }) {
   const [state, formAction, pending] = useActionState(signUpAction, initialState);
 
   return (
     <form action={formAction} className="space-y-4">
+      {next && <input type="hidden" name="next" value={next} />}
       <div className="space-y-2">
         <Label htmlFor="fullName">Nombre completo</Label>
         <Input id="fullName" name="fullName" required defaultValue={state.values?.fullName} />
