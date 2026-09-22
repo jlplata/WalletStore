@@ -118,7 +118,16 @@ Leyenda: COMPLETED · IN PROGRESS · BLOCKED · NEXT
   `docs/billing.md`.
 
 ## FASE 9 — Platform Admin
-- NEXT
+- COMPLETED: `/admin` (protegido por `requirePlatformAdmin`, solo
+  `profiles.is_platform_admin`). Dashboard con métricas globales reales
+  (organizaciones totales/activas/en prueba, MRR estimado desde
+  suscripciones activas, clientes finales, transacciones, Wallet passes
+  totales vs. reales). Listado y detalle de organizaciones (dueño, plan,
+  uso, sucursales/clientes/equipo, suspender/reactivar). Auditoría
+  (`/admin/audit` + `src/lib/audit.ts`): registro real de acciones
+  sensibles (cambio de rol, remoción de acceso, ajuste manual de saldo,
+  suspensión/reactivación de organización) en `audit_logs`, nunca
+  simulado.
 
 ## FASE 10 — Hardening
 - NEXT

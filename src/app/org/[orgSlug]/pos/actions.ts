@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getOrgMembership, requireOrgRole } from "@/lib/authz/session";
 import { syncWalletPassesForCustomerProgram } from "@/lib/wallet";
 import { dispatchWebhooks } from "@/lib/webhooks/dispatch";
+import { logAuditEvent } from "@/lib/audit";
 
 export async function getAssignableBranches(orgId: string) {
   const membership = await requireOrgRole(orgId, "purchase.record");
@@ -162,6 +163,13 @@ export async function addManualAdjustment(
   });
   if (error) throw new Error(error.message);
   await syncWalletPassesForCustomerProgram(customerId, programId);
+  await logAuditEvent({
+    organizationId: orgId,
+    action: "loyalty.manual_adjustment",
+    entityType: "customer_program_enrollments",
+    entityId: customerId,
+    after: { programId, stampsDelta, pointsDelta, reason },
+  });
   return data;
 }
 

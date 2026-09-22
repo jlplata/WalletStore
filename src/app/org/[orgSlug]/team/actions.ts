@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireOrgRole } from "@/lib/authz/session";
 import { getEmailProvider } from "@/lib/email";
+import { logAuditEvent } from "@/lib/audit";
 import type { MemberRole } from "@/lib/supabase/database.types";
 
 export type TeamFormState = { error?: string };
@@ -86,11 +87,28 @@ export async function updateMemberRoleAction(
 ) {
   await requireOrgRole(orgId, "team.invite");
   const supabase = await createClient();
+
+  const { data: before } = await supabase
+    .from("organization_members")
+    .select("role")
+    .eq("id", memberId)
+    .single();
+
   await supabase
     .from("organization_members")
     .update({ role })
     .eq("id", memberId)
     .eq("organization_id", orgId);
+
+  await logAuditEvent({
+    organizationId: orgId,
+    action: "team.role_changed",
+    entityType: "organization_members",
+    entityId: memberId,
+    before: { role: before?.role },
+    after: { role },
+  });
+
   revalidatePath(`/org/${orgSlug}/team`);
 }
 
@@ -110,6 +128,15 @@ export async function removeMemberAction(orgId: string, orgSlug: string, memberI
   }
 
   await supabase.from("organization_members").delete().eq("id", memberId).eq("organization_id", orgId);
+
+  await logAuditEvent({
+    organizationId: orgId,
+    action: "team.member_removed",
+    entityType: "organization_members",
+    entityId: memberId,
+    before: target,
+  });
+
   revalidatePath(`/org/${orgSlug}/team`);
 }
 
