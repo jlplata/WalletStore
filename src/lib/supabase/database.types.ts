@@ -604,6 +604,26 @@ export interface Database {
         Args: { p_organization_id: string; p_program_id: string; p_segment: string };
         Returns: Database["public"]["Tables"]["customers"]["Row"][];
       };
+      org_dashboard_metrics: {
+        Args: { p_organization_id: string; p_period_start: string; p_period_end: string };
+        Returns: {
+          customers_total: number;
+          customers_new: number;
+          customers_active: number;
+          customers_inactive_30: number;
+          customers_inactive_60: number;
+          transactions_count: number;
+          revenue_cents: number;
+          stamps_awarded: number;
+          points_awarded: number;
+          rewards_unlocked: number;
+          rewards_redeemed: number;
+        }[];
+      };
+      org_daily_transactions: {
+        Args: { p_organization_id: string; p_period_start: string; p_period_end: string };
+        Returns: { day: string; transactions_count: number; revenue_cents: number }[];
+      };
     };
     Enums: {
       member_role: MemberRole;

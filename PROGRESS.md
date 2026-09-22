@@ -78,7 +78,17 @@ Leyenda: COMPLETED · IN PROGRESS · BLOCKED · NEXT
 - NEXT (bloqueado parcialmente: requiere credenciales reales de Apple/Google para producción; mocks se implementan sin bloqueo)
 
 ## FASE 6 — Analytics
-- NEXT
+- COMPLETED: Dashboard real (`/org/[orgSlug]/dashboard`) con KPIs calculados
+  en una sola función SQL (`org_dashboard_metrics`, con verificación de rol
+  dentro de la función): clientes registrados/nuevos/activos/inactivos,
+  transacciones, valor de compras, sellos/puntos otorgados, recompensas
+  emitidas/canjeadas, tasa de canje. Selector de período (7/30/90 días).
+  Gráfica de transacciones por día (`org_daily_transactions`) con un
+  componente de barras propio, sin dependencia externa, siguiendo el
+  skill de dataviz (un solo hue secuencial del token `--primary` de la
+  app, tooltip real al pasar el cursor, etiquetas selectivas). Empty state
+  cuando el negocio no tiene programas todavía. Filtros de clientes por
+  segmento ya cubiertos en la Fase 3.
 
 ## FASE 7 — Campaigns
 - NEXT
