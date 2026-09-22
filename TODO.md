@@ -72,6 +72,10 @@ credenciales/decisiones externas. Formato: prioridad, motivo, dependencia, fase.
 - Campañas con IA, churn prediction, recomendaciones, A/B testing — futuro.
 - Sentry real (solo se deja hook de logging estructurado preparado) — Fase 10.
 
+## Deuda técnica conocida
+
+- Segmentos automáticos (Fase 6) se calculan por query en vivo inicialmente;
+  si el volumen de clientes crece, evaluar materialized view.
 - **[BAJA] Límites de plan no se aplican todavía** — `plan_features`
   (branches_limit, staff_limit, customers_limit, campaigns_enabled, etc.)
   existe y se muestra en `/billing`, pero ninguna acción del producto
@@ -81,14 +85,12 @@ credenciales/decisiones externas. Formato: prioridad, motivo, dependencia, fase.
   simplemente abre un nuevo Checkout; Stripe maneja el prorrateo al
   reemplazar la suscripción, pero no hay una pantalla de confirmación de
   cambio de plan en la app. Fase 8.
-
-## Deuda técnica conocida
-
-- Segmentos automáticos (Fase 6) se calculan por query en vivo inicialmente;
-  si el volumen de clientes crece, evaluar materialized view.
-- Rate limiting inicial es in-memory por instancia (Fase 1/10); para múltiples
-  instancias en producción se recomienda Upstash Redis o equivalente (no
-  agregado para no introducir dependencia externa sin necesidad confirmada).
+- **[ALTA] Rate limiting no implementado.** Los endpoints públicos sin
+  autenticación (`/join/[programId]` y su RPC `register_customer`,
+  `submit_privacy_request`, `/api/wallet/issue/...`) no tienen límite de
+  tasa todavía. No se agregó una dependencia (Upstash Redis, etc.) sin
+  necesidad confirmada, pero **debe resolverse antes de producción** — ver
+  `PRODUCTION_CHECKLIST.md`. Fase 10.
 - Push de Apple Wallet (`sendApplePassPush`) se envía de forma síncrona
   dentro de la petición que registra la compra/canje. Para volumen alto,
   mover a una cola (ver `webhook_deliveries` como precedente de patrón) en

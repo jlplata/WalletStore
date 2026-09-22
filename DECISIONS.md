@@ -96,6 +96,26 @@ Wallet" abre para un cliente sin sesión; el token completo se reserva para
 las llamadas que hace Wallet en nombre del usuario una vez instalado el
 pase. Documentado como aceptable para MVP en `TODO.md`.
 
+## 2026-09-22 — Tests de integración con auto-skip en vez de mocks de Supabase
+`tests/integration/` corre contra un proyecto Supabase real (crea y borra
+sus propios datos) en vez de mockear el cliente de Supabase. Mockear RLS y
+funciones `SECURITY DEFINER` de Postgres daría falsa confianza — lo único
+que realmente prueba el aislamiento entre tenants es Postgres evaluándolo.
+La suite se salta limpiamente (`describe.skipIf`) sin credenciales, así que
+`npm test` nunca falla en un entorno sin base de datos, pero tampoco finge
+haber probado algo que no probó.
+
+## 2026-09-22 — Seed de demo escribe directo con el cliente admin, no vía RPC
+`scripts/seed-demo.ts` inserta directamente en `purchase_transactions` /
+`loyalty_ledger` con fechas históricas en vez de llamar
+`record_purchase_transaction()` en un loop. La función RPC exige
+`auth.uid()` (valida el rol del llamador), que no existe en un script con
+service role; y necesitamos fechas retroactivas para que el dashboard
+demo se vea realista, cosa que la función (usa `now()`) no permite. El
+script mantiene manualmente la misma consistencia que la función
+garantizaría (ledger + caché de saldo coherentes) porque es un seed
+controlado, no una superficie expuesta a usuarios.
+
 ## 2026-09-22 — Monorepo simple (no monorepo multi-paquete)
 Un solo proyecto Next.js full-stack en la raíz del repo, sin separar en
 paquetes/workspaces todavía. Motivo: simplicidad > complejidad prematura;

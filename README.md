@@ -67,6 +67,15 @@ aplicación funciona en modo de prueba (mock) para esas integraciones — ver
 | `npm run typecheck` | TypeScript sin emitir archivos |
 | `npm run test` | Tests unitarios/integración (Vitest) |
 | `npm run test:e2e` | Tests end-to-end (Playwright) |
+| `npm run seed:demo` | Crea la organización de demostración "Café Demo" con datos de ejemplo (ver `docs/testing.md`) |
+
+## Demo
+
+Para probar el producto con datos reales de inmediato (sin registrarte a
+mano), corre `npm run seed:demo` contra tu proyecto Supabase y entra a
+`/org/cafe-demo/dashboard` con cualquiera de las cuentas que el script
+imprime al final. Todos los datos quedan marcados como demo
+(`organizations.is_demo = true`).
 
 ## Documentación
 
@@ -79,3 +88,4 @@ aplicación funciona en modo de prueba (mock) para esas integraciones — ver
 - `docs/billing.md` — configurar Stripe
 - `docs/development.md` — guía para desarrolladores
 - `docs/testing.md` — estrategia de pruebas
+- `PRODUCTION_CHECKLIST.md` — checklist de seguridad/infra antes de producción

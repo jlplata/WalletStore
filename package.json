@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "seed:demo": "tsx scripts/seed-demo.ts"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.2.6",

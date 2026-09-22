@@ -1,6 +1,6 @@
 import "server-only";
-import { createHmac } from "node:crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { signWebhookPayload, buildWebhookBody } from "./sign";
 
 /**
  * Dispatches an event to every active webhook an organization has
@@ -31,15 +31,11 @@ export async function dispatchWebhooks(
   );
   if (targets.length === 0) return;
 
-  const body = JSON.stringify({
-    type: eventType,
-    data: payload,
-    timestamp: new Date().toISOString(),
-  });
+  const body = buildWebhookBody(eventType, payload);
 
   await Promise.all(
     targets.map(async (webhook) => {
-      const signature = createHmac("sha256", webhook.secret).update(body).digest("hex");
+      const signature = signWebhookPayload(webhook.secret, body);
       let responseStatus: number | null = null;
       let status: "SUCCESS" | "FAILED" = "FAILED";
 

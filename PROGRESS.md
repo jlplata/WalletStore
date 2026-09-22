@@ -130,7 +130,24 @@ Leyenda: COMPLETED · IN PROGRESS · BLOCKED · NEXT
   simulado.
 
 ## FASE 10 — Hardening
-- NEXT
+- COMPLETED: Tests unitarios (Vitest, `tests/unit/`) para lógica pura
+  (validaciones Zod, formateo, firma HMAC de webhooks, matriz de
+  permisos) — 35 tests, todos pasan sin dependencias externas. Tests de
+  integración (`tests/integration/`) contra un Supabase real (aislamiento
+  entre tenants, idempotencia del ledger), con auto-skip limpio cuando no
+  hay credenciales configuradas (nunca fallan "en falso"). Tests E2E
+  (Playwright, `tests/e2e/`) para los 4 flujos críticos de la sección 36
+  del spec. CI (`.github/workflows/ci.yml`): lint, typecheck, tests, build
+  en cada PR. Documentación completa: `docs/architecture.md`,
+  `docs/database.md`, `docs/security.md`, `docs/deployment.md`,
+  `docs/development.md`, `docs/testing.md` (además de los ya escritos en
+  fases anteriores: apple-wallet-setup, google-wallet-setup, billing).
+  Seed de demo (`scripts/seed-demo.ts` / `npm run seed:demo`): organización
+  "Café Demo" con 2 sucursales, 5 miembros de equipo, 30 clientes con
+  historial de compras/recompensas realista, marcada explícitamente como
+  `is_demo = true`. `PRODUCTION_CHECKLIST.md` con el estado real de cada
+  ítem de seguridad/infraestructura, incluyendo las brechas conocidas
+  (rate limiting, backups, revisión legal de textos).
 
 ---
 
