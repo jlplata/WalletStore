@@ -509,6 +509,79 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["audit_logs"]["Row"]>;
         Relationships: [];
       };
+      webhooks: {
+        Row: {
+          id: string;
+          organization_id: string;
+          url: string;
+          secret: string;
+          event_types: string[];
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["webhooks"]["Row"]>;
+        Update: Partial<Database["public"]["Tables"]["webhooks"]["Row"]>;
+        Relationships: [];
+      };
+      webhook_deliveries: {
+        Row: {
+          id: string;
+          webhook_id: string;
+          event_type: string;
+          payload: Record<string, unknown>;
+          status: "PENDING" | "SUCCESS" | "FAILED";
+          attempts: number;
+          last_attempted_at: string | null;
+          response_status: number | null;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["webhook_deliveries"]["Row"]>;
+        Update: Partial<Database["public"]["Tables"]["webhook_deliveries"]["Row"]>;
+        Relationships: [];
+      };
+      segments: {
+        Row: {
+          id: string;
+          organization_id: string;
+          name: string;
+          description: string | null;
+          rules: Record<string, unknown>;
+          is_system: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["segments"]["Row"]>;
+        Update: Partial<Database["public"]["Tables"]["segments"]["Row"]>;
+        Relationships: [];
+      };
+      campaign_audiences: {
+        Row: {
+          id: string;
+          campaign_id: string;
+          customer_id: string;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["campaign_audiences"]["Row"]>;
+        Update: Partial<Database["public"]["Tables"]["campaign_audiences"]["Row"]>;
+        Relationships: [];
+      };
+      campaign_deliveries: {
+        Row: {
+          id: string;
+          campaign_id: string;
+          customer_id: string;
+          channel: CampaignChannel;
+          status: DeliveryStatus;
+          provider_message_id: string | null;
+          error: string | null;
+          sent_at: string | null;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["campaign_deliveries"]["Row"]>;
+        Update: Partial<Database["public"]["Tables"]["campaign_deliveries"]["Row"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {

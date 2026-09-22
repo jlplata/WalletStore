@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { customerRegistrationSchema } from "@/lib/validations/customer";
+import { dispatchWebhooks } from "@/lib/webhooks/dispatch";
 
 export type JoinFormState = { error?: string };
 
@@ -42,6 +43,17 @@ export async function registerCustomerAction(
 
   if (error || !customer) {
     return { error: error?.message ?? "No se pudo completar el registro." };
+  }
+
+  // register_customer() re-uses an existing customer (matched by phone/email)
+  // when someone re-joins the same business, so only fire the webhook when
+  // this really was a brand-new signup.
+  const justCreated = Date.now() - new Date(customer.created_at).getTime() < 5000;
+  if (justCreated) {
+    await dispatchWebhooks(organizationId, "customer.created", {
+      customer_id: customer.id,
+      program_id: programId,
+    });
   }
 
   redirect(`/join/${programId}/lista?token=${customer.qr_token}`);

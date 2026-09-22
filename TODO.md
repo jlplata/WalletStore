@@ -36,6 +36,26 @@ credenciales/decisiones externas. Formato: prioridad, motivo, dependencia, fase.
   `SUPABASE_SERVICE_ROLE_KEY`, luego aplica las migraciones en `supabase/migrations/`.
   Fase 1.
 
+- **[MEDIA] Programación de campañas ("scheduled_at")** — la columna existe
+  y la UI podría capturarla, pero no se expone en el formulario: no hay
+  cron/worker en esta arquitectura Next.js-only para ejecutar envíos
+  diferidos. Fase 7 solo implementa "enviar ahora" (funciona de verdad,
+  sin simular). Dependencia: agregar un scheduler (Vercel Cron, un worker
+  externo, o `pg_cron`/`pg_net` en Supabase) antes de exponer "programar".
+- **[BAJA] Campañas por canal Wallet** — la brief pide "campañas sobre
+  Wallet y email cuando sea técnicamente posible". Email está
+  implementado; actualizar el campo `relevantText`/mensaje de un pase ya
+  guardado sin re-emitirlo requiere más trabajo en los providers de Apple/
+  Google. No se expuso esa opción en la UI para no crear un botón que no
+  funcione. Fase 7/5.
+- **[BAJA] `reward.unlocked` no se despacha como webhook saliente** — sí se
+  registra en la tabla interna `events` (la función RPC lo inserta), pero
+  el despachador de webhooks (`src/lib/webhooks/dispatch.ts`) solo se
+  invoca explícitamente para los eventos que la capa de aplicación conoce
+  con certeza (compra, canje, registro, Wallet agregado). Detectar qué
+  recompensas se desbloquearon en una compra requeriría que la función RPC
+  devuelva esa información. Fase 7.
+
 ## Roadmap post-MVP (no implementar ahora)
 
 - WhatsApp Business API, SMS — Fase 7 (arquitectura preparada vía

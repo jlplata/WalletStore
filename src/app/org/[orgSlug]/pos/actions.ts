@@ -4,6 +4,7 @@ import { randomUUID } from "crypto";
 import { createClient } from "@/lib/supabase/server";
 import { getOrgMembership, requireOrgRole } from "@/lib/authz/session";
 import { syncWalletPassesForCustomerProgram } from "@/lib/wallet";
+import { dispatchWebhooks } from "@/lib/webhooks/dispatch";
 
 export async function getAssignableBranches(orgId: string) {
   const membership = await requireOrgRole(orgId, "purchase.record");
@@ -131,6 +132,13 @@ export async function recordPurchase(
   });
   if (error) throw new Error(error.message);
   await syncWalletPassesForCustomerProgram(customerId, programId);
+  await dispatchWebhooks(orgId, "purchase.completed", { transaction: data });
+  await dispatchWebhooks(orgId, "loyalty.earned", {
+    customer_id: customerId,
+    program_id: programId,
+    stamps_earned: data?.stamps_earned,
+    points_earned: data?.points_earned,
+  });
   return data;
 }
 
@@ -172,6 +180,7 @@ export async function redeemReward(
   });
   if (error) throw new Error(error.message);
   await syncWalletPassesForCustomerProgram(customerId, programId);
+  await dispatchWebhooks(orgId, "reward.redeemed", { reward_instance: data });
   return data;
 }
 

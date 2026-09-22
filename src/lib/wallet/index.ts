@@ -1,6 +1,7 @@
 import "server-only";
 import { randomBytes, randomUUID } from "node:crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { dispatchWebhooks } from "@/lib/webhooks/dispatch";
 import { getWalletPassContent } from "./content";
 import { MockWalletProvider } from "./mock-provider";
 import { AppleWalletProvider, loadAppleWalletCredentials } from "./apple/provider";
@@ -91,6 +92,11 @@ export async function issueWalletPass(
       organization_id: content.organization.id,
       type: "customer.wallet_added",
       payload: { customer_id: customerId, program_id: programId, platform },
+    });
+    await dispatchWebhooks(content.organization.id, "customer.wallet_added", {
+      customer_id: customerId,
+      program_id: programId,
+      platform,
     });
   }
 

@@ -91,7 +91,19 @@ Leyenda: COMPLETED · IN PROGRESS · BLOCKED · NEXT
   segmento ya cubiertos en la Fase 3.
 
 ## FASE 7 — Campaigns
-- NEXT
+- COMPLETED: Webhooks salientes firmados con HMAC-SHA256
+  (`src/lib/webhooks/dispatch.ts`), compatibles con n8n. Se despachan tras
+  los eventos reales que la app puede detectar con certeza:
+  `customer.created`, `customer.wallet_added`, `purchase.completed`,
+  `loyalty.earned`, `reward.redeemed`, `campaign.sent`. Gestión de
+  webhooks en Configuración (crear con secreto mostrado una sola vez,
+  activar/desactivar, eliminar). Módulo de campañas
+  (`/org/[orgSlug]/campaigns`): crear, elegir audiencia (segmento o todos),
+  redactar, enviar por correo de inmediato vía `EmailProvider`, resultados
+  reales (enviados/fallidos/sin correo — nunca aperturas o clics
+  fabricados, porque el proveedor no los expone). "Programar para después"
+  documentado como pendiente en `TODO.md` (requiere un scheduler que esta
+  arquitectura Next.js-only no tiene todavía).
 
 ## FASE 8 — Billing
 - NEXT (bloqueado parcialmente: requiere claves reales de Stripe para pagos en vivo; Checkout/webhooks se implementan contra API real, probados con claves de test cuando estén disponibles)
