@@ -67,6 +67,14 @@ al final. Motivo: sobrevive a refresh/cierre del navegador, cada paso queda
 protegido por `requireOrgRole` de forma independiente, y evita perder trabajo
 si el negocio abandona el flujo a la mitad.
 
+## 2026-09-22 — Escáner QR del POS: `BarcodeDetector` nativo, sin librería externa
+Se usa la API web nativa `BarcodeDetector` (Chrome/Android/Edge) para leer el
+QR del cliente desde la cámara. Safari/iOS aún no la soporta ampliamente;
+cuando no está disponible, el modo caja cae automáticamente a búsqueda manual
+(nombre/teléfono/código), que siempre funciona. Se evita así una dependencia
+JS de decodificación QR solo para cubrir ese caso, cumpliendo "usar APIs web
+cuando sea posible" sin fingir soporte universal de cámara.
+
 ## 2026-09-22 — Monorepo simple (no monorepo multi-paquete)
 Un solo proyecto Next.js full-stack en la raíz del repo, sin separar en
 paquetes/workspaces todavía. Motivo: simplicidad > complejidad prematura;

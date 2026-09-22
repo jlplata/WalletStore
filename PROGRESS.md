@@ -34,7 +34,17 @@ Leyenda: COMPLETED · IN PROGRESS · BLOCKED · NEXT
   (Resend / consola) implementado. lint, typecheck y build pasan limpio.
 
 ## FASE 3 — Loyalty Engine
-- NEXT
+- COMPLETED: Gestión de programas (`/org/[orgSlug]/programs`, crear/activar/
+  desactivar, QR descargable por programa vía `/api/qr`). Gestión de
+  recompensas (`/org/[orgSlug]/rewards`). Clientes (`/org/[orgSlug]/customers`)
+  con filtros por programa/segmento (usa `customers_in_segment`), búsqueda,
+  enmascarado de contacto según rol, y detalle de cliente
+  (`/customers/[id]`) con saldos por programa, Wallet, recompensas, ledger y
+  consentimientos. Modo caja (`/org/[orgSlug]/pos`): escaneo QR con
+  `BarcodeDetector` nativo + búsqueda manual, registrar compra
+  (`record_purchase_transaction`), +1 sello manual (`adjust_customer_balance`),
+  canjear recompensa (`redeem_customer_reward`), todo vía las funciones RPC
+  atómicas de la Fase 1. lint, typecheck y build pasan limpio.
 
 ## FASE 4 — Customer Experience
 - NEXT
