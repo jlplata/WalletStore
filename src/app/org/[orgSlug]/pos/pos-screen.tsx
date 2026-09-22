@@ -126,10 +126,10 @@ export function PosScreen({ orgId, branches }: { orgId: string; branches: Branch
   }
 
   function handleRedeem(rewardInstanceId: string) {
-    if (!branchId) return;
+    if (!branchId || !customerState || !program) return;
     startTransition(async () => {
       try {
-        await redeemReward(orgId, branchId, rewardInstanceId);
+        await redeemReward(orgId, branchId, rewardInstanceId, customerState.customer.id, program.programId);
         toast.success("Recompensa canjeada.");
         setRedeemOpen(false);
         if (customerState) loadCustomer(customerState.customer.id);

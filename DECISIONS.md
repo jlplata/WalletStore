@@ -75,6 +75,27 @@ cuando no está disponible, el modo caja cae automáticamente a búsqueda manual
 JS de decodificación QR solo para cubrir ese caso, cumpliendo "usar APIs web
 cuando sea posible" sin fingir soporte universal de cámara.
 
+## 2026-09-22 — Apple Wallet: PNG placeholder generado en código, no assets estáticos
+Un `.pkpass` requiere `icon.png`/`logo.png`; sin arte subido por el negocio,
+se genera un PNG sólido válido con el color de marca (`src/lib/wallet/apple/png.ts`,
+codificador PNG mínimo sin dependencias) en vez de usar un ícono genérico
+falso o simular que existe arte. Es un PNG real, no un placeholder de texto.
+
+## 2026-09-22 — Push de Apple Wallet vía `node:http2` en vez de una librería de APNs
+APNs soporta autenticación TLS mutua con el mismo certificado del Pass Type
+ID. Node tiene cliente HTTP/2 nativo, así que se implementó el push
+directamente (`src/lib/wallet/apple/apns.ts`) sin agregar una dependencia
+dedicada de push notifications.
+
+## 2026-09-22 — Descarga inicial de `.pkpass` sin autenticación por token
+El endpoint público (`/api/wallet/apple/passes/[serial].pkpass`) sirve el
+pase por su `serial_number` (UUID no adivinable) sin exigir el
+`authenticationToken` que sí protege el web service de PassKit
+(registro/actualización). Es el enlace que el propio botón "Add to Apple
+Wallet" abre para un cliente sin sesión; el token completo se reserva para
+las llamadas que hace Wallet en nombre del usuario una vez instalado el
+pase. Documentado como aceptable para MVP en `TODO.md`.
+
 ## 2026-09-22 — Monorepo simple (no monorepo multi-paquete)
 Un solo proyecto Next.js full-stack en la raíz del repo, sin separar en
 paquetes/workspaces todavía. Motivo: simplicidad > complejidad prematura;

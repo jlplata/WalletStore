@@ -357,6 +357,18 @@ export interface Database {
         >;
         Relationships: [];
       };
+      events: {
+        Row: {
+          id: string;
+          organization_id: string | null;
+          type: string;
+          payload: Record<string, unknown>;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["events"]["Row"]>;
+        Update: Partial<Database["public"]["Tables"]["events"]["Row"]>;
+        Relationships: [];
+      };
       wallet_passes: {
         Row: {
           id: string;
@@ -540,7 +552,7 @@ export interface Database {
       };
       submit_privacy_request: {
         Args: {
-          p_organization_id: string;
+          p_organization_id?: string | null;
           p_request_type: string;
           p_contact_email?: string | null;
           p_contact_phone?: string | null;

@@ -3,6 +3,7 @@
 import { randomUUID } from "crypto";
 import { createClient } from "@/lib/supabase/server";
 import { getOrgMembership, requireOrgRole } from "@/lib/authz/session";
+import { syncWalletPassesForCustomerProgram } from "@/lib/wallet";
 
 export async function getAssignableBranches(orgId: string) {
   const membership = await requireOrgRole(orgId, "purchase.record");
@@ -129,6 +130,7 @@ export async function recordPurchase(
     p_idempotency_key: randomUUID(),
   });
   if (error) throw new Error(error.message);
+  await syncWalletPassesForCustomerProgram(customerId, programId);
   return data;
 }
 
@@ -151,10 +153,17 @@ export async function addManualAdjustment(
     p_reason: reason,
   });
   if (error) throw new Error(error.message);
+  await syncWalletPassesForCustomerProgram(customerId, programId);
   return data;
 }
 
-export async function redeemReward(orgId: string, branchId: string, customerRewardId: string) {
+export async function redeemReward(
+  orgId: string,
+  branchId: string,
+  customerRewardId: string,
+  customerId: string,
+  programId: string
+) {
   await requireOrgRole(orgId, "reward.redeem");
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("redeem_customer_reward", {
@@ -162,6 +171,7 @@ export async function redeemReward(orgId: string, branchId: string, customerRewa
     p_branch_id: branchId,
   });
   if (error) throw new Error(error.message);
+  await syncWalletPassesForCustomerProgram(customerId, programId);
   return data;
 }
 

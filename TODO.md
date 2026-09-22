@@ -5,16 +5,23 @@ credenciales/decisiones externas. Formato: prioridad, motivo, dependencia, fase.
 
 ## Bloqueados por credenciales externas
 
-- **[ALTA] Certificados Apple Wallet reales** — motivo: firmar `.pkpass` con
-  Pass Type ID cert + WWDR intermedio requiere cuenta Apple Developer.
-  Dependencia: usuario debe generar certificados (ver `docs/apple-wallet-setup.md`)
-  y configurar `APPLE_CERTIFICATE`, `APPLE_PRIVATE_KEY`, `APPLE_WWDR_CERTIFICATE`,
-  `APPLE_PASS_TYPE_IDENTIFIER`, `APPLE_TEAM_IDENTIFIER`. Fase 5.
-- **[ALTA] Service account de Google Wallet** — motivo: firmar JWT de "Save to
-  Google Wallet" y llamar la API requiere Issuer ID + service account.
+- **[ALTA] Certificados Apple Wallet reales** — código completo e
+  implementado (`src/lib/wallet/apple/`: firma `.pkpass` con PKCS#7 vía
+  `node-forge`, web service de PassKit, push real vía APNs con
+  `node:http2`). Sin las credenciales, cae automáticamente a
+  `MockWalletProvider`. Dependencia: usuario debe generar certificados (ver
+  `docs/apple-wallet-setup.md`) y configurar `APPLE_CERTIFICATE_BASE64`,
+  `APPLE_PRIVATE_KEY_BASE64`, `APPLE_WWDR_CERTIFICATE_BASE64`,
+  `APPLE_PASS_TYPE_IDENTIFIER`, `APPLE_TEAM_IDENTIFIER`, `APPLE_WEB_SERVICE_URL`.
+  Fase 5 (completada).
+- **[ALTA] Service account de Google Wallet** — código completo e
+  implementado (`src/lib/wallet/google/`: crea/actualiza loyaltyClass y
+  loyaltyObject vía REST, firma el enlace "Save to Google Wallet" con JWT
+  RS256). Sin las credenciales, cae automáticamente a `MockWalletProvider`.
   Dependencia: usuario debe crear cuenta de Google Wallet Business Console
-  (ver `docs/google-wallet-setup.md`) y configurar `GOOGLE_WALLET_ISSUER_ID`,
-  `GOOGLE_SERVICE_ACCOUNT_JSON`. Fase 5.
+  y aprobar la loyaltyClass (aprobación externa de Google, ver
+  `docs/google-wallet-setup.md`) y configurar `GOOGLE_WALLET_ISSUER_ID`,
+  `GOOGLE_SERVICE_ACCOUNT_JSON`. Fase 5 (completada).
 - **[MEDIA] Claves Stripe reales** — motivo: Checkout/Portal/Webhooks en vivo
   requieren cuenta Stripe. Dependencia: `STRIPE_SECRET_KEY`,
   `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`. La
@@ -48,3 +55,15 @@ credenciales/decisiones externas. Formato: prioridad, motivo, dependencia, fase.
 - Rate limiting inicial es in-memory por instancia (Fase 1/10); para múltiples
   instancias en producción se recomienda Upstash Redis o equivalente (no
   agregado para no introducir dependencia externa sin necesidad confirmada).
+- Push de Apple Wallet (`sendApplePassPush`) se envía de forma síncrona
+  dentro de la petición que registra la compra/canje. Para volumen alto,
+  mover a una cola (ver `webhook_deliveries` como precedente de patrón) en
+  vez de bloquear la respuesta al cajero. Fase 5/10.
+- `loyaltyClass` de Google Wallet se crea en estado `UNDER_REVIEW`; publicarla
+  como `APPROVED` requiere solicitud de revisión a Google desde su consola
+  (fuera del alcance de este repo). Fase 5.
+- El link de descarga inicial del `.pkpass`
+  (`/api/wallet/apple/passes/[serial].pkpass`) no requiere autenticación
+  más allá de que el `serial` sea un UUID no adivinable; suficiente para
+  MVP, pero podría reforzarse con un token de un solo uso si se detecta
+  abuso. Fase 10 (hardening).

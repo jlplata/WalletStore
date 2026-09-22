@@ -47,7 +47,32 @@ Leyenda: COMPLETED · IN PROGRESS · BLOCKED · NEXT
   atómicas de la Fase 1. lint, typecheck y build pasan limpio.
 
 ## FASE 4 — Customer Experience
-- NEXT
+- COMPLETED: Landing pública por programa (`/join/[programId]`) con
+  branding, explicación de progreso y formulario de registro (sin
+  contraseña) vía la RPC pública `register_customer`. Consentimientos
+  (términos + marketing separado) registrados explícitamente. Página
+  "Tu tarjeta está lista" (`/join/[programId]/lista`) con botones Add to
+  Apple Wallet / Add to Google Wallet, detectando el dispositivo del
+  cliente para priorizar el botón correcto sin ocultar el otro. Páginas
+  legales (`/legal/privacidad`, `/legal/terminos`,
+  `/legal/eliminar-datos`) marcadas explícitamente como plantillas
+  revisables, con solicitud de eliminación de datos funcional.
+
+## FASE 5 — Wallets
+- COMPLETED: `WalletProvider` desacoplado (`src/lib/wallet/`) con
+  `AppleWalletProvider`, `GoogleWalletProvider` y `MockWalletProvider`,
+  seleccionado automáticamente según haya credenciales configuradas.
+  Apple: firma real de `.pkpass` (PKCS#7 vía `node-forge`), web service
+  completo de PassKit (registro/baja de dispositivo, última versión del
+  pase, logging) y push real a APNs vía `node:http2` (sin dependencias
+  nuevas). Google: creación/actualización real de `loyaltyClass`/
+  `loyaltyObject` vía REST y enlace "Save to Google Wallet" firmado con
+  JWT RS256. Mock: página de vista previa rotulada explícitamente "modo de
+  prueba", nunca se presenta como integración real. Sincronización
+  automática del Wallet tras compras/ajustes/canjes
+  (`syncWalletPassesForCustomerProgram`). Documentado en
+  `docs/apple-wallet-setup.md` y `docs/google-wallet-setup.md`. lint,
+  typecheck y build pasan limpio.
 
 ## FASE 5 — Wallets
 - NEXT (bloqueado parcialmente: requiere credenciales reales de Apple/Google para producción; mocks se implementan sin bloqueo)
