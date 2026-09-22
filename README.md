@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# WalletStore
 
-## Getting Started
+Plataforma SaaS multiempresa de lealtad digital para negocios físicos
+(cafeterías, restaurantes, barberías, gimnasios, etc.). Los clientes finales
+se registran desde un QR y agregan su tarjeta a Apple Wallet o Google Wallet
+sin instalar ninguna app.
 
-First, run the development server:
+Ver `IMPLEMENTATION_PLAN.md` para la arquitectura completa, `PROGRESS.md`
+para el estado de cada fase, `DECISIONS.md` para decisiones técnicas y
+`TODO.md` para trabajo pendiente/bloqueado por credenciales externas.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Stack
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Next.js 16 (App Router) · TypeScript · React 19 · Tailwind CSS 4 ·
+Supabase (Postgres + Auth + Storage) · Stripe · Resend · Apple PassKit ·
+Google Wallet API · Vitest · Playwright.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Requisitos
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Node.js 22+
+- Una cuenta de [Supabase](https://supabase.com) (plan gratuito alcanza para desarrollo)
 
-## Learn More
+## Puesta en marcha local
 
-To learn more about Next.js, take a look at the following resources:
+1. Instala dependencias:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   npm install
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. Crea un proyecto en [supabase.com/dashboard](https://supabase.com/dashboard).
 
-## Deploy on Vercel
+3. Copia `.env.example` a `.env.local` y llena las variables de
+   `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` y
+   `SUPABASE_SERVICE_ROLE_KEY` desde Project Settings → API de tu proyecto.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. Aplica el esquema de base de datos. Con la [Supabase CLI](https://supabase.com/docs/guides/cli):
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   ```bash
+   supabase link --project-ref <tu-project-ref>
+   supabase db push
+   ```
+
+   O, si prefieres no instalar la CLI, pega el contenido de cada archivo en
+   `supabase/migrations/` (en orden, por nombre de archivo) en el SQL editor
+   del dashboard de Supabase.
+
+5. Corre el servidor de desarrollo:
+
+   ```bash
+   npm run dev
+   ```
+
+   Abre [http://localhost:3000](http://localhost:3000).
+
+Sin las credenciales de Apple Wallet, Google Wallet, Stripe o Resend, la
+aplicación funciona en modo de prueba (mock) para esas integraciones — ver
+`docs/apple-wallet-setup.md`, `docs/google-wallet-setup.md` y `docs/billing.md`.
+
+## Scripts
+
+| Comando | Qué hace |
+|---|---|
+| `npm run dev` | Servidor de desarrollo |
+| `npm run build` | Build de producción |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | TypeScript sin emitir archivos |
+| `npm run test` | Tests unitarios/integración (Vitest) |
+| `npm run test:e2e` | Tests end-to-end (Playwright) |
+
+## Documentación
+
+- `docs/architecture.md` — arquitectura del sistema
+- `docs/database.md` — modelo de datos y RLS
+- `docs/security.md` — modelo de seguridad
+- `docs/deployment.md` — despliegue a Vercel + Supabase
+- `docs/apple-wallet-setup.md` — configurar Apple Wallet
+- `docs/google-wallet-setup.md` — configurar Google Wallet
+- `docs/billing.md` — configurar Stripe
+- `docs/development.md` — guía para desarrolladores
+- `docs/testing.md` — estrategia de pruebas
