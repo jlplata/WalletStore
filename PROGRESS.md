@@ -106,7 +106,16 @@ Leyenda: COMPLETED · IN PROGRESS · BLOCKED · NEXT
   arquitectura Next.js-only no tiene todavía).
 
 ## FASE 8 — Billing
-- NEXT (bloqueado parcialmente: requiere claves reales de Stripe para pagos en vivo; Checkout/webhooks se implementan contra API real, probados con claves de test cuando estén disponibles)
+- COMPLETED: `BillingProvider` desacoplado (`src/lib/billing/`) con
+  `StripeBillingProvider` (Checkout, Customer Portal, webhook con
+  verificación de firma como única fuente de verdad del estado de
+  suscripción — idempotente vía `upsert` por `organization_id`) y
+  `MockBillingProvider` (activa el plan sin cargo real cuando no hay
+  claves, con aviso explícito en la UI, vía `/billing/mock-checkout`).
+  Página `/org/[orgSlug]/billing`: estado actual, comparación de planes
+  (leídos de `plans`/`plan_features`, nunca hardcodeados), botón de
+  checkout y de portal de administración. Documentado en
+  `docs/billing.md`.
 
 ## FASE 9 — Platform Admin
 - NEXT

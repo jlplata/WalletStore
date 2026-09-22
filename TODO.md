@@ -22,11 +22,15 @@ credenciales/decisiones externas. Formato: prioridad, motivo, dependencia, fase.
   y aprobar la loyaltyClass (aprobación externa de Google, ver
   `docs/google-wallet-setup.md`) y configurar `GOOGLE_WALLET_ISSUER_ID`,
   `GOOGLE_SERVICE_ACCOUNT_JSON`. Fase 5 (completada).
-- **[MEDIA] Claves Stripe reales** — motivo: Checkout/Portal/Webhooks en vivo
-  requieren cuenta Stripe. Dependencia: `STRIPE_SECRET_KEY`,
-  `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`. La
-  integración está implementada contra la API real; sin claves, `BillingProvider`
-  usa un adaptador mock explícito. Fase 8.
+- **[MEDIA] Claves Stripe reales** — código completo e implementado
+  (`src/lib/billing/`: Checkout, Customer Portal, webhook con verificación
+  de firma como fuente de verdad del estado de suscripción). Sin las
+  claves, `BillingProvider` usa `MockBillingProvider` (activa el plan
+  directamente en la base de datos, sin cargo real, con aviso explícito en
+  la UI). Dependencia: usuario debe crear cuenta Stripe, productos/precios,
+  y configurar `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`,
+  `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` + guardar los Price IDs en la tabla
+  `plans` (ver `docs/billing.md`). Fase 8 (completada).
 - **[MEDIA] Resend API key** — motivo: envío real de emails transaccionales y
   de campañas. Sin clave, `EmailProvider` usa `ConsoleEmailProvider` (loguea,
   no envía). Fase 7/2.
@@ -67,6 +71,16 @@ credenciales/decisiones externas. Formato: prioridad, motivo, dependencia, fase.
 - White-label, reseller accounts, franquicias, multi-país — futuro.
 - Campañas con IA, churn prediction, recomendaciones, A/B testing — futuro.
 - Sentry real (solo se deja hook de logging estructurado preparado) — Fase 10.
+
+- **[BAJA] Límites de plan no se aplican todavía** — `plan_features`
+  (branches_limit, staff_limit, customers_limit, campaigns_enabled, etc.)
+  existe y se muestra en `/billing`, pero ninguna acción del producto
+  (crear sucursal, invitar, enviar campaña) verifica todavía el límite del
+  plan activo antes de proceder. Fase 8/10.
+- **[BAJA] Sin prorrateo/downgrade explícito en la UI** — cambiar de plan
+  simplemente abre un nuevo Checkout; Stripe maneja el prorrateo al
+  reemplazar la suscripción, pero no hay una pantalla de confirmación de
+  cambio de plan en la app. Fase 8.
 
 ## Deuda técnica conocida
 

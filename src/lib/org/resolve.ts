@@ -15,7 +15,7 @@ export async function resolveOrgForAction(orgSlug: string, action: PermissionAct
   const supabase = await createClient();
   const { data: org } = await supabase
     .from("organizations")
-    .select("id, name, slug, currency")
+    .select("id, name, slug, currency, status")
     .eq("slug", orgSlug)
     .maybeSingle();
 
